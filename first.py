@@ -7,6 +7,16 @@ from MyQTree.mytree import MyTree, MyTreeItem
 
 GAME_DATA = [("CSGO", "Valve", "FPS"), ("COD", "Activision", "FPS"), ("DOTA2", "Valve", "Moba")]
 
+game_data = [
+    ('Game', None),
+    ('CSGO', 'FPS'),
+    ('MOBA', 'Game'),
+    ('FPS', 'Game'),
+    ('BF', 'FPS'),
+    ('COD', 'FPS'),
+    ('DOTA2', 'MOBA'),
+]
+
 
 class MyWindow(QtGui.QWidget):
     def __init__(self):
@@ -25,8 +35,16 @@ class MyWindow(QtGui.QWidget):
         self.create_gui()
 
         # add gui
+        self.hlayout = QtGui.QHBoxLayout()
+        searchInput = QtGui.QLineEdit()
+        searchInput.setFixedHeight(20)
         ok_button = QtGui.QPushButton("OK")
-        self.box_layout.addWidget(ok_button)
+        # self.box_layout.addWidget(ok_button)
+        # self.box_layout.addWidget(self.tree)
+        self.hlayout.addWidget(searchInput)
+        self.hlayout.addWidget(ok_button)
+        # self.box_layout.addWidget(self.hlayout)
+        self.box_layout.addLayout(self.hlayout)
         self.box_layout.addWidget(self.tree)
 
         # Show ui
@@ -57,12 +75,74 @@ class MyWindow(QtGui.QWidget):
             # tree_item = QtGui.QTreeWidgetItem(parent, ['', game[0], game[1], game[2]])
             tree_item = MyTreeItem(parent, game)
 
+    def get_node(self):
+        pass
+
+    def add_game_data(self, game_data):
+        parent_nodes = []
+        remove_list = []
+        parent_texts = []
+        add_list = []
+        add_nodes = []
+
+        # Add root node
+        for g in game_data:
+            if not g[1]:
+                node = MyTreeItem(self.tree, (g[0], g[0], g[0]))
+                node.setExpanded(True)
+                parent_nodes.append(node)
+                remove_list.append(g)
+                parent_texts.append(g[0])
+
+        # Remove parents level 1
+        for rm in remove_list:
+            print('remove ', rm[0])
+            game_data.remove(rm)
+        remove_list = []
+
+        c = 0
+        while game_data and c < 5:  # c < 5 prevent infinite loop if mistake
+            print('data is ', game_data)
+            for index, g in enumerate(game_data):
+                if g[1] in parent_texts:
+                    print(g[0], ' is child of ', parent_texts)
+                    add_list.append(g)
+
+            parent_texts = []
+
+            print(len(parent_nodes), len(add_list))
+
+            for p in parent_nodes:
+                print("Enter loop")
+                for g in add_list:
+                    if g[1] == p.text(1):
+                        # node = self.get_node(g[0])
+                        # self.tree.add_node(node, parent=p)
+                        print("Add to game ", type(p))
+                        node = MyTreeItem(p, (g[0], g[0], g[0]))
+                        add_nodes.append(node)
+                        parent_texts.append(g[0])
+                        remove_list.append(g)
+
+            # Clear list
+            parent_nodes = add_nodes
+            add_nodes = []
+            print(parent_nodes)
+
+            # Remove
+            for rm in remove_list:
+                game_data.remove(rm)
+                remove_list = []
+
+            c += 1
+
 
 def main():
     app = QtGui.QApplication(sys.argv)
     window = MyWindow()
 
-    window.add_item(GAME_DATA)
+    #window.add_item(GAME_DATA)
+    window.add_game_data(game_data)
 
     window.show()
     app.exec_()

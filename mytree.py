@@ -16,8 +16,8 @@ class MyTreeItem(QtGui.QTreeWidgetItem):
         super(MyTreeItem, self).__init__(parent)
 
         self.label = QtGui.QLabel()
-        # self.pixmap = QtGui.QPixmap('C:\\Users\\PredatorPy\\Pictures\\ico.png')
         self.pixmap = QtGui.QPixmap('ico.png')
+        self.pixmap = self.pixmap.scaledToHeight(70)
         self.label.setPixmap(self.pixmap)
 
         self.treeWidget().setItemWidget(self, 0, self.label)

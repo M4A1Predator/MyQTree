@@ -6,6 +6,16 @@ from MyQTree.treewidget import CustomTreeWidget
 
 DATA_LIST = [('Pred', 'Predator', 'Free style', 'CSGO', 'predator')]
 
+game_data = [
+    ('Game', None),
+    ('CSGO', 'FPS'),
+    ('MOBA', 'Game'),
+    ('FPS', 'Game'),
+    ('BF', 'FPS'),
+    ('COD', 'FPS'),
+    ('DOTA2', 'MOBA'),
+]
+
 
 class MainWindow(QtGui.QMainWindow):
     def __init__(self):
@@ -15,8 +25,6 @@ class MainWindow(QtGui.QMainWindow):
 
         self.construct_ui()
         self.create_gui()
-
-        self.draw_tree()
 
         # Set window
         self.layout = QtGui.QVBoxLayout()
@@ -31,6 +39,5 @@ class MainWindow(QtGui.QMainWindow):
 
     def create_gui(self):
         self.tree_widget = CustomTreeWidget()
-
-    def draw_tree(self):
-        self.tree_widget.add_items(DATA_LIST)
+        self.tree_widget.add_games(game_data)
+        # self.tree_widget.add_items(DATA_LIST)

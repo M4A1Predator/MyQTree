@@ -115,7 +115,7 @@ class MyWindow(QtGui.QWidget):
             for p in parent_nodes:
                 print("Enter loop")
                 for g in add_list:
-                    if g[1] == p.text(1):
+                    if g[1] == p.game_name:
                         # node = self.get_node(g[0])
                         # self.tree.add_node(node, parent=p)
                         print("Add to game ", type(p))

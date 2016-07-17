@@ -11,11 +11,11 @@ class CustomTreeItemWidget(QtGui.QTreeWidgetItem):
         self.image = self.image_pixmap.scaledToHeight(70)
         self.image_label.setPixmap(self.image_pixmap)
 
-        self.setText(2, data[0])
-        self.setText(3, data[1])
-        self.setText(4, data[2])
-        self.setText(5, data[3])
-        self.setText(6, data[4])
+        # self.setText(2, data[0])
+        # self.setText(3, data[1])
+        # self.setText(4, data[2])
+        # self.setText(5, data[3])
+        # self.setText(6, data[4])
 
 
 class CustomTreeWidget(QtGui.QTreeWidget):
@@ -27,6 +27,9 @@ class CustomTreeWidget(QtGui.QTreeWidget):
         self.setColumnWidth(1, 125)
         self.header = QtGui.QTreeWidgetItem(['', 'image', 'nickname', 'full name', 'position', 'department', 'login name'])
         self.setHeaderItem(self.header)
+
+        # Setup menu
+        self.r_menu = None
 
         # self.itemActivated.connect(self.cb)
         self.itemClicked.connect(self.cb)
@@ -131,14 +134,29 @@ class CustomTreeWidget(QtGui.QTreeWidget):
                 game_data.remove(rm)
                 remove_list = []
 
+    def contextMenuEvent(self, event):
+        self.r_menu = QtGui.QMenu()
+        expand_menu = QtGui.QAction('Expand', self)
+        expand_menu.triggered.connect(self.expand_cb)
+        self.r_menu.addAction(expand_menu)
+        # add other required actions
+        self.r_menu.popup(QtGui.QCursor.pos())
+
     def cb(self, e):
-        print(e)
         item = self.selectedItems()
         try:
             print(item[0].game_data, 'Child of', item[0].parent().game_data)
-            item[0].parent().setSelected(True)
+            parent_item = item[0].parent()
+            if parent_item:
+                # set color
+                parent_item.setBackground(0, QtGui.QBrush(QtCore.Qt.cyan))
+                parent_item.setBackground(1, QtGui.QBrush(QtCore.Qt.cyan))
+                parent_item.setBackground(2, QtGui.QBrush(QtCore.Qt.cyan))
         except AttributeError:
             pass
+
+    def expand_cb(self, event):
+        print(event)
 
 
 class GameItemWidget(QtGui.QTreeWidgetItem):

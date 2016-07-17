@@ -11,11 +11,11 @@ class CustomTreeItemWidget(QtGui.QTreeWidgetItem):
         self.image = self.image_pixmap.scaledToHeight(70)
         self.image_label.setPixmap(self.image_pixmap)
 
-        self.setText(1, data[0])
-        self.setText(2, data[1])
-        self.setText(3, data[2])
-        self.setText(4, data[3])
-        self.setText(5, data[4])
+        self.setText(2, data[0])
+        self.setText(3, data[1])
+        self.setText(4, data[2])
+        self.setText(5, data[3])
+        self.setText(6, data[4])
 
 
 class CustomTreeWidget(QtGui.QTreeWidget):
@@ -24,8 +24,8 @@ class CustomTreeWidget(QtGui.QTreeWidget):
 
         # Setup tree
         self.setColumnCount(6)
-        self.setColumnWidth(0, 125)
-        self.header = QtGui.QTreeWidgetItem(['image', 'nickname', 'full name', 'position', 'department', 'login name'])
+        self.setColumnWidth(1, 125)
+        self.header = QtGui.QTreeWidgetItem(['', 'image', 'nickname', 'full name', 'position', 'department', 'login name'])
         self.setHeaderItem(self.header)
 
         # self.itemActivated.connect(self.cb)
@@ -38,9 +38,12 @@ class CustomTreeWidget(QtGui.QTreeWidget):
             image_pixmap = QtGui.QPixmap("ico.png")
             image = image_pixmap.scaledToHeight(70)
             image_label.setPixmap(image)
-            self.setItemWidget(item, 0, image_label)
+            self.setItemWidget(item, 1, image_label)
 
     def add_games(self, game_data):
+        # Clear first
+        self.clear()
+
         parent_nodes = []
         remove_list = []
         parent_texts = []
@@ -48,8 +51,34 @@ class CustomTreeWidget(QtGui.QTreeWidget):
         add_nodes = []
 
         # Add root node
+        # for g in game_data:
+        #     if not g[1]:
+        #         # Add tree item
+        #         node = GameItemWidget(g)
+        #         self.addTopLevelItem(node)
+        #         self.setItemExpanded(node, True)
+        #
+        #         # Add image add the first col
+        #         image_label = QtGui.QLabel()
+        #         image_pixmap = QtGui.QPixmap("ico.png")
+        #         image = image_pixmap.scaledToHeight(70)
+        #         image_label.setPixmap(image)
+        #         self.setItemWidget(node, 0, image_label)
+        #         self.setItemWidget(node, 2, node.label)
+        #         # self.connect(self, QtCore.SIGNAL("itemClicked(QTreeWidgetItem*, int)"), self.cb)
+        #
+        #         # Add list
+        #         parent_nodes.append(node)
+        #         remove_list.append(g)
+        #         parent_texts.append(g[0])
+
+        # all parent
+        all_parents = []
         for g in game_data:
-            if not g[1]:
+            all_parents.append(g[0])
+
+        for g in game_data:
+            if not g[1] in all_parents:
                 # Add tree item
                 node = GameItemWidget(g)
                 self.addTopLevelItem(node)
@@ -60,20 +89,14 @@ class CustomTreeWidget(QtGui.QTreeWidget):
                 image_pixmap = QtGui.QPixmap("ico.png")
                 image = image_pixmap.scaledToHeight(70)
                 image_label.setPixmap(image)
-                self.setItemWidget(node, 0, image_label)
-                self.setItemWidget(node, 2, node.label)
+                self.setItemWidget(node, 1, image_label)
+                # self.setItemWidget(node, 2, node.label)
                 # self.connect(self, QtCore.SIGNAL("itemClicked(QTreeWidgetItem*, int)"), self.cb)
 
                 # Add list
                 parent_nodes.append(node)
                 remove_list.append(g)
                 parent_texts.append(g[0])
-
-        # Remove parents level 1
-        for rm in remove_list:
-            # print('remove ', rm[0])
-            game_data.remove(rm)
-        remove_list = []
 
         while game_data:
             for index, g in enumerate(game_data):
@@ -93,7 +116,7 @@ class CustomTreeWidget(QtGui.QTreeWidget):
                         image_pixmap = QtGui.QPixmap("ico.png")
                         image = image_pixmap.scaledToHeight(70)
                         image_label.setPixmap(image)
-                        self.setItemWidget(node, 0, image_label)
+                        self.setItemWidget(node, 1, image_label)
 
                         add_nodes.append(node)
                         parent_texts.append(g[0])
@@ -111,8 +134,11 @@ class CustomTreeWidget(QtGui.QTreeWidget):
     def cb(self, e):
         print(e)
         item = self.selectedItems()
-        print(item[0].game_data, 'Child of', item[0].parent().game_data)
-        item[0].parent().setSelected(True)
+        try:
+            print(item[0].game_data, 'Child of', item[0].parent().game_data)
+            item[0].parent().setSelected(True)
+        except AttributeError:
+            pass
 
 
 class GameItemWidget(QtGui.QTreeWidgetItem):
@@ -131,7 +157,7 @@ class GameItemWidget(QtGui.QTreeWidgetItem):
         self.label.setText(data[0])
         self.label.mousePressEvent = lambda e: self.m_cb(e)
 
-        self.setText(1, data[0])
+        self.setText(2, data[0])
 
     def m_cb(self, event):
         print("Mouse click item", event.__dict__)
